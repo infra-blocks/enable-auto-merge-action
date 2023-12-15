@@ -2,24 +2,25 @@ import * as core from "@actions/core";
 import { context } from "@actions/github";
 import { createHandler } from "./handler.js";
 import VError from "verror";
-import {
-  checkSupportedEvent,
-  Event,
-  getInputs,
-  stringInput,
-} from "@infra-blocks/github";
+import { getInputs, stringInput } from "@infra-blocks/github";
+import { MergeMethod } from "./types.js";
 
 async function main() {
   core.debug(`received env: ${JSON.stringify(process.env, null, 2)}`);
   core.debug(`received context: ${JSON.stringify(context, null, 2)}`);
-  checkSupportedEvent(context.eventName, [Event.Push]);
+
   const inputs = getInputs({
-    example: stringInput(),
+    "github-token": stringInput(),
+    "pull-request": stringInput(),
+    "merge-method": stringInput<MergeMethod>({
+      choices: ["MERGE", "SQUASH", "REBASE"],
+    }),
   });
   const handler = createHandler({
-    context,
     config: {
-      example: inputs.example,
+      gitHubToken: inputs["github-token"],
+      pullRequestNodeId: inputs["pull-request"],
+      mergeMethod: inputs["merge-method"],
     },
   });
   const outputs = await handler.handle();

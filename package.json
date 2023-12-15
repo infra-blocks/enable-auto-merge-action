@@ -1,5 +1,5 @@
 {
-  "name": "github-action-typescript-docker-template",
+  "name": "enable-auto-merge-action",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -17,14 +17,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/infrastructure-blocks/github-action-typescript-docker-template.git"
+    "url": "git+https://github.com/infrastructure-blocks/enable-auto-merge-action.git"
   },
   "author": "PhilLavoie",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/infrastructure-blocks/github-action-typescript-docker-template/issues"
+    "url": "https://github.com/infrastructure-blocks/enable-auto-merge-action/issues"
   },
-  "homepage": "https://github.com/infrastructure-blocks/github-action-typescript-docker-template#readme",
+  "homepage": "https://github.com/infrastructure-blocks/enable-auto-merge-action#readme",
   "devDependencies": {
     "@infra-blocks/test": "^0.1.1",
     "@types/mocha": "^10.0.1",
@@ -45,7 +45,8 @@
   "dependencies": {
     "@actions/core": "^1.6.0",
     "@actions/github": "^5.0.1",
-    "@infra-blocks/github": "^0.2.0",
+    "@infra-blocks/github": "^0.6.0",
+    "@octokit/core": "^5.0.2",
     "verror": "^1.10.1"
   }
 }

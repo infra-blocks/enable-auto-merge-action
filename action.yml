@@ -1,12 +1,19 @@
-name: Template action
+name: Enable Auto Merge Action
 description: Does not do anything, it's a template
 inputs:
-  example:
-    description: An example input
+  github-token:
+    description: |
+      The GitHub token used to authenticate. This should be a PAT.
     required: true
-outputs:
-  example-output:
-    description: An example output
+  pull-request:
+    description: |
+      The pull request Node ID. Defaults to the picking up from the context, when available.
+    required: false
+    default: ${{ github.event.pull_request.node_id }}
+  merge-method:
+    description: One of "MERGE", "SQUASH", "REBASE". Defaults to "MERGE"
+    required: false
+    default: "MERGE"
 runs:
   using: "docker"
   image: Dockerfile

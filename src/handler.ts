@@ -1,4 +1,6 @@
-import { Context } from "@actions/github/lib/context.js";
+import { MergeMethod } from "./types.js";
+import { Octokit } from "@octokit/core";
+import VError from "verror";
 
 // TODO: move into lib?
 export type Outputs = Record<string, string>;
@@ -8,36 +10,66 @@ export interface Handler<O extends Outputs = Outputs> {
 }
 
 export interface Config {
-  example: string;
+  gitHubToken: string;
+  pullRequestNodeId: string;
+  mergeMethod: MergeMethod;
 }
 
-export interface ExampleOutputs extends Outputs {
-  ["example-output"]: string;
-}
+export type EnableAutoMergeOutputs = Outputs;
 
-export class HandlerImpl implements Handler<ExampleOutputs> {
-  private static ERROR_NAME = "HandlerImplError";
+export class EnableAutoMergeHandler implements Handler<EnableAutoMergeOutputs> {
+  private static ERROR_NAME = "EnableAutoMergeHandlerError";
 
-  private readonly context: Context;
+  private readonly octokit: Octokit;
   private readonly config: Config;
 
-  constructor(params: { context: Context; config: Config }) {
-    const { context, config } = params;
-    this.context = context;
+  constructor(params: { octokit: Octokit; config: Config }) {
+    const { octokit, config } = params;
+    this.octokit = octokit;
     this.config = config;
   }
 
-  handle(): Promise<ExampleOutputs> {
-    const outputs = {
-      ["example-output"]: `got input ${this.config.example}`,
-    };
-    return Promise.resolve(outputs);
+  async handle(): Promise<EnableAutoMergeOutputs> {
+    await this.enableAutoMerge();
+    return {};
+  }
+
+  private async enableAutoMerge() {
+    // Enabling auto merge is achieved by calling the graphql API.
+    try {
+      await this.octokit.graphql(
+        `mutation enableAutoMerge($pullRequestId: ID!, $mergeMethod: PullRequestMergeMethod) {
+      enablePullRequestAutoMerge(input: {
+        pullRequestId: $pullRequestId,
+        mergeMethod: $mergeMethod,
+      }) {
+        pullRequest {
+          id,
+          autoMergeRequest {
+            enabledAt
+          }
+        }
+      }
+    }`,
+        {
+          pullRequestId: this.config.pullRequestNodeId,
+          mergeMethod: this.config.mergeMethod,
+        }
+      );
+    } catch (err) {
+      throw new VError(
+        {
+          name: EnableAutoMergeHandler.ERROR_NAME,
+          cause: err as Error,
+        },
+        `error enabling auto merge on PR ${this.config.pullRequestNodeId}`
+      );
+    }
   }
 }
 
-export function createHandler(params: {
-  context: Context;
-  config: Config;
-}): Handler {
-  return new HandlerImpl(params);
+export function createHandler(params: { config: Config }): Handler {
+  const { config } = params;
+  const octokit = new Octokit({ auth: config.gitHubToken });
+  return new EnableAutoMergeHandler({ octokit, config });
 }

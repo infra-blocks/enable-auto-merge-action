@@ -1,5 +1,6 @@
 name: Enable Auto Merge Action
-description: Does not do anything, it's a template
+description: |
+  Turns on auto merge on a pull request. Note that the repository must first allow this feature.
 inputs:
   github-token:
     description: |
@@ -17,5 +18,3 @@ inputs:
 runs:
   using: "docker"
   image: Dockerfile
-  args:
-    - ${{ inputs.example }}

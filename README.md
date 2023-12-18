@@ -1,10 +1,32 @@
 # enable-auto-merge-action
 
-TO COME.
+This action calls the GitHub GraphQL API to enable auto merge on a pull request. [The repository must first
+allow this feature.](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-auto-merge-for-pull-requests-in-your-repository)
 
 ## Usage
 
-TO COME.
+```yaml
+name: Enable some auto merge yo
+
+on:
+  pull_request: ~
+
+permissions:
+  pull-requests: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  do-some-work:
+    steps:
+      - name: Turn on auto merge
+        uses: infrastructure-blocks/enable-auto-merge-action@v0
+        with:
+          github-token: ${{ secrets.GITHUB_PAT }}
+          pull-request: ${{ github.event.pull_request.node_id }}
+```
 
 ## Development
 

@@ -1,7 +1,0 @@
-services:
-  action:
-    image: infra-blocks/enable-auto-merge-action
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    container_name: enable-auto-merge-action

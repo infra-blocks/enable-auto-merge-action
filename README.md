@@ -1,51 +1,54 @@
-# enable-auto-merge-action
+# composite-action-template
 
-This action calls the GitHub GraphQL API to enable auto merge on a pull request. [The repository must first
-allow this feature.](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-auto-merge-for-pull-requests-in-your-repository)
+Upon creating a repository from this template:
+- Remove the [trigger-update-from-template workflow](.github/workflows/trigger-update-from-template.yml)
+- Edit the action.yml to correspond to your new action
+- Edit the self-test workflow.
+- Edit this readme: this summary and the usage section.
+
+## Inputs
+
+|     Name      | Required | Description       |
+|:-------------:|:--------:|-------------------|
+| example-input |   true   | An example input. |
+
+## Outputs
+
+|      Name      | Description        |
+|:--------------:|--------------------|
+| example-output | An example output. |
+
+## Permissions
+
+|     Scope     | Level | Reason   |
+|:-------------:|:-----:|----------|
+| pull-requests | read  | Because. |
 
 ## Usage
 
 ```yaml
-name: Enable some auto merge yo
+name: Template Usage
 
 on:
-  pull_request: ~
+  push: ~
 
+# The required permissions.
 permissions:
-  pull-requests: write
+  pull-requests: read
 
+# The suggested concurrency controls.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  do-some-work:
+  example-job:
+    runs-on: ubuntu-22.04
     steps:
-      - name: Turn on auto merge
-        uses: infrastructure-blocks/enable-auto-merge-action@v0
-        with:
-          github-token: ${{ secrets.GITHUB_PAT }}
-          pull-request: ${{ github.event.pull_request.node_id }}
+      - uses: infrastructure-blocks/composite-action-template@v1
 ```
 
 ## Development
-
-This project is written in Typescript and leverages `nvm` to manage its version. It also uses Git hooks
-to automatically build and commit compiled code. This last part emerges from the fact that GitHub actions
-run Javascript (and not typescript) and that all the node_modules/ are expected to be provided in the Git
-repository of the action.
-
-Having a Git hook to compile automatically helps in diminishing the chances that a developer forgets to
-provide the compiled sources in a change request.
-
-### Setup
-
-Once `nvm` is installed, simply run the following:
-
-```
-nvm install
-npm install
-``` 
 
 ### Releasing
 

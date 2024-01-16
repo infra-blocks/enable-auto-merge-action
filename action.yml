@@ -2,19 +2,42 @@ name: Enable Auto Merge Action
 description: |
   Turns on auto merge on a pull request. Note that the repository must first allow this feature.
 inputs:
-  github-token:
-    description: |
-      The GitHub token used to authenticate. This should be a PAT.
+  github-pat:
+    description: The GitHub token used to authenticate.
     required: true
-  pull-request:
-    description: |
-      The pull request Node ID. Defaults to the picking up from the context, when available.
+  node-id:
+    description: The pull request Node ID
     required: false
     default: ${{ github.event.pull_request.node_id }}
   merge-method:
-    description: One of "MERGE", "SQUASH", "REBASE". Defaults to "MERGE"
+    description: One of "MERGE", "SQUASH", "REBASE".
     required: false
-    default: "MERGE"
+    default: MERGE
 runs:
-  using: "docker"
-  image: Dockerfile
+  using: composite
+  steps:
+    - uses: actions/github-script@v7
+      id: my-script
+      with:
+        github-token: ${{ inputs.github-pat }}
+        retries: 3
+        script: |
+          return await github.graphql(
+            `mutation enableAutoMerge($pullRequestId: ID!, $mergeMethod: PullRequestMergeMethod) {
+               enablePullRequestAutoMerge(input: {
+                 pullRequestId: $pullRequestId,
+                 mergeMethod: $mergeMethod,
+               }) {
+                 pullRequest {
+                   id,
+                   autoMergeRequest {
+                     enabledAt
+                   }
+                 }
+               }
+            }`,
+            {
+              pullRequestId: "${{ inputs.node-id }}",
+              mergeMethod: "${{ inputs.merge-method }}"
+            }
+          );

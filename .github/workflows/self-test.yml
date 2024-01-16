@@ -14,4 +14,4 @@ jobs:
       - uses: ./
         id: self-test
         with:
-          github-token: ${{ secrets.PAT }}
+          github-pat: ${{ secrets.PAT }}

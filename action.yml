@@ -1,20 +1,43 @@
-name: Composite action template
+name: Enable Auto Merge Action
 description: |
-  This action does nothing meaningful.
-
+  Turns on auto merge on a pull request. Note that the repository must first allow this feature.
 inputs:
-  example-input:
-    description: A useless input as an example
+  github-pat:
+    description: The GitHub token used to authenticate.
     required: true
-outputs:
-  example-output:
-    description: You know it.
-    value: ${{ steps.generate-output.outputs.example-output }}
+  node-id:
+    description: The pull request Node ID
+    required: false
+    default: ${{ github.event.pull_request.node_id }}
+  merge-method:
+    description: One of "MERGE", "SQUASH", "REBASE".
+    required: false
+    default: MERGE
 runs:
-  using: "composite"
+  using: composite
   steps:
-    - run: echo "here is your input :${{ inputs.example-input }}."
-      shell: bash
-    - id: generate-output
-      run: echo "example-output=here is your output"
-      shell: bash
+    - uses: actions/github-script@v7
+      id: my-script
+      with:
+        github-token: ${{ inputs.github-pat }}
+        retries: 3
+        script: |
+          return await github.graphql(
+            `mutation enableAutoMerge($pullRequestId: ID!, $mergeMethod: PullRequestMergeMethod) {
+               enablePullRequestAutoMerge(input: {
+                 pullRequestId: $pullRequestId,
+                 mergeMethod: $mergeMethod,
+               }) {
+                 pullRequest {
+                   id,
+                   autoMergeRequest {
+                     enabledAt
+                   }
+                 }
+               }
+            }`,
+            {
+              pullRequestId: "${{ inputs.node-id }}",
+              mergeMethod: "${{ inputs.merge-method }}"
+            }
+          );

@@ -1,7 +1,6 @@
-name: Self test
+name: Self Test
 
-on:
-  push: ~
+on: [pull_request]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -12,9 +11,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-      - id: composite-action
-        uses: ./
+      - uses: ./
+        id: self-test
         with:
-          example-input: Hello?
-      - run: |
-          echo ${{ steps.composite-action.outputs.example-output }}
+          github-pat: ${{ secrets.PAT }}

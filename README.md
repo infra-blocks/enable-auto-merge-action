@@ -1,51 +1,31 @@
 # composite-action-template
 
-Upon creating a repository from this template:
-- Remove the [trigger-update-from-template workflow](.github/workflows/trigger-update-from-template.yml)
-- Edit the action.yml to correspond to your new action
-- Edit the self-test workflow.
-- Edit this readme: this summary and the usage section.
+This action calls the GitHub GraphQL API to enable auto merge on a pull request. [The repository must first
+allow this feature.](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-auto-merge-for-pull-requests-in-your-repository)
 
 ## Inputs
 
-|     Name      | Required | Description       |
-|:-------------:|:--------:|-------------------|
-| example-input |   true   | An example input. |
+|     Name     | Required | Description                                                                                             |
+|:------------:|:--------:|---------------------------------------------------------------------------------------------------------|
+|  github-pat  |   true   | The GitHub token used to authenticate. At the time of this writing, enabling auto merge requires a PAT. |
+|   node-id    |  false   | The pull request Node ID. Defaults to ${{ github.event.pull_request.node_id }}.                         |
+| merge-method |  false   | One of "MERGE", "SQUASH", "REBASE". Defaults to "MERGE"                                                 |                         
 
 ## Outputs
 
-|      Name      | Description        |
-|:--------------:|--------------------|
-| example-output | An example output. |
+N/A
 
 ## Permissions
 
-|     Scope     | Level | Reason   |
-|:-------------:|:-----:|----------|
-| pull-requests | read  | Because. |
+Tied to the PAT.
 
 ## Usage
 
 ```yaml
-name: Template Usage
-
-on:
-  push: ~
-
-# The required permissions.
-permissions:
-  pull-requests: read
-
-# The suggested concurrency controls.
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-jobs:
-  example-job:
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: infrastructure-blocks/composite-action-template@v1
+- name: Turn on auto merge
+  uses: infrastructure-blocks/enable-auto-merge-action@v2
+  with:
+    github-pat: ${{ secrets.GITHUB_PAT }}
 ```
 
 ## Development

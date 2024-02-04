@@ -1,7 +1,7 @@
 # enable-auto-merge-action
 [![Release](https://github.com/infrastructure-blocks/enable-auto-merge-action/actions/workflows/git-tag-semver-from-label.yml/badge.svg)](https://github.com/infrastructure-blocks/enable-auto-merge-action/actions/workflows/git-tag-semver-from-label.yml)
 [![Self Test](https://github.com/infrastructure-blocks/enable-auto-merge-action/actions/workflows/self-test.yml/badge.svg)](https://github.com/infrastructure-blocks/enable-auto-merge-action/actions/workflows/self-test.yml)
-[![Update](https://github.com/infrastructure-blocks/enable-auto-merge-action/actions/workflows/update-from-template.yml/badge.svg)](https://github.com/infrastructure-blocks/enable-auto-merge-action/actions/workflows/update-from-template.yml)
+[![Update From Template](https://github.com/infrastructure-blocks/enable-auto-merge-action/actions/workflows/update-from-template.yml/badge.svg)](https://github.com/infrastructure-blocks/enable-auto-merge-action/actions/workflows/update-from-template.yml)
 
 This action calls the GitHub GraphQL API to enable auto merge on a pull request. [The repository must first
 allow this feature.](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-auto-merge-for-pull-requests-in-your-repository)

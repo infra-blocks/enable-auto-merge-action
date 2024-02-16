@@ -11,7 +11,13 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-      - uses: ./
+      - name: Invoke action
+        uses: ./
         id: self-test
         with:
           github-pat: ${{ secrets.PAT }}
+      - name: Show outputs
+        env:
+          OUTPUTS: ${{ toJson(steps.self-test.outputs) }}
+        run: |
+          echo "${OUTPUTS}"
